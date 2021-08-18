@@ -38,14 +38,16 @@ class TeamCityApi:
         if len(files_artifact) > 1:
             for i in range(0, len(files_artifact)):
                 content_artifact = artifact.get('file')[i].get('content')
+                if content_artifact is None:
+                    continue
                 if content_artifact.get('href').find('.apk') != -1:
-                    break
+                    continue
         else:
             content_artifact = artifact.get('file')[0].get('content')
-        if content_artifact is None:
-            while content_artifact is None:
-                artifact = self.perform_request(artifact.get('file')[0].get('children').get('href'))
-                content_artifact = artifact.get('file')[0].get('content')
+
+        while content_artifact is None:
+            artifact = self.perform_request(artifact.get('file')[0].get('children').get('href'))
+            content_artifact = artifact.get('file')[0].get('content')
 
         file_index = 1
         content_artifact = content_artifact.get('href')
